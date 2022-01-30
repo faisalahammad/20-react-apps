@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './App.css';
 
 // Add extra zero at the begining of the min/sec
@@ -9,17 +9,24 @@ function padTime(time) {
 function App() {
   const [title, setTitle] = useState('Let the countdown begin!!!');
   const [timeLeft, setTimeLeft] = useState(10);
+  const intervalRef = useRef(null);
 
   // function
   function startTimer() {
-    setInterval(() => {
+    setTitle(`You're doing great!`);
+   intervalRef.current = setInterval(() => {
       setTimeLeft(timeLeft => {
         if (timeLeft >= 1) return timeLeft - 1;
-
         // reset the timer
         return 0;
       });
-    }, 1000)
+   }, 1000)
+  }
+
+  // reset interval
+  function stopTimer() {
+    clearInterval(intervalRef.current);
+    setTitle('Keep it up!');
   }
 
   // calculation
@@ -38,7 +45,7 @@ function App() {
 
       <div className="buttons">
         <button onClick={startTimer}>Start</button>
-        <button>Stop</button>
+        <button onClick={stopTimer}>Stop</button>
         <button>Reset</button>
       </div>
     </div>
