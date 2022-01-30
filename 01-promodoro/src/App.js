@@ -8,25 +8,42 @@ function padTime(time) {
 
 function App() {
   const [title, setTitle] = useState('Let the countdown begin!!!');
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef(null);
 
   // function
   function startTimer() {
+    // Check if the timer is already runing then don't do anything
+    if (intervalRef.current !== null) return;
+
     setTitle(`You're doing great!`);
-   intervalRef.current = setInterval(() => {
+    setIsRunning(true);
+
+    intervalRef.current = setInterval(() => {
       setTimeLeft(timeLeft => {
         if (timeLeft >= 1) return timeLeft - 1;
         // reset the timer
+        resetTimer();
         return 0;
       });
-   }, 1000)
+    }, 1000)
   }
 
   // reset interval
   function stopTimer() {
+    // check if the timer is already stopped then don't do anything
+    if (intervalRef.current === null) return;
+
     clearInterval(intervalRef.current);
     setTitle('Keep it up!');
+    setIsRunning(false);
+  }
+
+  function resetTimer() {
+    clearInterval(intervalRef.current);
+    setTimeLeft(25 * 60);
+    setTitle('Ready to go another round?');
   }
 
   // calculation
@@ -44,9 +61,9 @@ function App() {
       </div>
 
       <div className="buttons">
-        <button onClick={startTimer}>Start</button>
-        <button onClick={stopTimer}>Stop</button>
-        <button>Reset</button>
+        {!isRunning && <button onClick={ startTimer }>Start</button>}
+        {isRunning && <button onClick={ stopTimer }>Stop</button>}
+        <button onClick={ resetTimer }>Reset</button>
       </div>
     </div>
   );
