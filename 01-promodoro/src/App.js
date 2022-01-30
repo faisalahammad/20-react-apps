@@ -36,14 +36,17 @@ function App() {
     if (intervalRef.current === null) return;
 
     clearInterval(intervalRef.current);
+    intervalRef.current = null;
     setTitle('Keep it up!');
     setIsRunning(false);
   }
 
   function resetTimer() {
     clearInterval(intervalRef.current);
-    setTimeLeft(25 * 60);
+    intervalRef.current = null;
     setTitle('Ready to go another round?');
+    setTimeLeft(25 * 60);
+    setIsRunning(false);
   }
 
   // calculation
