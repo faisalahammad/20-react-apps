@@ -1,45 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-
-function Tab({ children }) {
-  const [highlightStyle, setHighlightStyle] = useState({ left: 0, opacity: 0 });
-
-  function moveHighlight(e) {
-    setHighlightStyle({ left: e.nativeEvent.layerX - 150 });
-  }
-
-  function hideHighlight(e) {
-    setHighlightStyle({
-      opacity: 0,
-      left: e.nativeEvent.layerX - 150,
-    });
-  }
-
-  return (
-    <div className="tab" onMouseMove={moveHighlight} onMouseOut={hideHighlight}>
-      <div className="highlight" style={highlightStyle} />
-      {children}
-    </div>
-  );
-}
+import About from "./components/About/About";
+import Features from "./components/Features/Features";
+import Header from "./components/Header/Header";
+import Home from "./components/Home/Home";
 
 function App() {
   return (
     <div className="app">
       <div className="browser">
-        <div className="tabs">
-          <Tab>
-            <a>Home</a>
-          </Tab>
-          <Tab>
-            <a>About</a>
-          </Tab>
-          <Tab>
-            <a>Contact</a>
-          </Tab>
-        </div>
+        <Header />
 
-        <div className="viewport">Pages Go Here</div>
+        <div className="viewport">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/features" element={<Features />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
