@@ -7,20 +7,37 @@ const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 function App() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     getPhotos();
   }, [page]);
 
   function getPhotos() {
-    fetch(
-      `https://api.unsplash.com/photos/?client_id=${accessKey}&page=${page}`
-    )
+    // check if the user is searching
+    let apiURL = `https://api.unsplash.com/photos?`;
+    if (query) apiURL = `https://api.unsplash.com/search/photos?query=${query}`;
+    apiURL += `&page=${page}`;
+    apiURL += `&client_id=${accessKey}`;
+
+    fetch(apiURL)
       .then((res) => res.json())
       .then((data) => {
-        setImages((images) => [...images, ...data]);
+        const imagesFromApi = data.results ?? data;
+
+        // if page is 1, then we need a whole new array of images
+        if (page === 1) setImages(imagesFromApi);
+
+        // if page is > 1, then we are adding for our infinite scroll
+        setImages((images) => [...images, ...imagesFromApi]);
       });
   }
+
+  const searchPhotos = (e) => {
+    e.preventDefault();
+    setPage(1);
+    getPhotos();
+  };
 
   if (!accessKey) {
     return (
@@ -34,8 +51,13 @@ function App() {
     <div className="app">
       <h1>Unsplash Image Gallery!</h1>
 
-      <form>
-        <input type="text" placeholder="Search Unsplash..." />
+      <form onSubmit={searchPhotos}>
+        <input
+          type="text"
+          placeholder="Search Unsplash..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <button>Search</button>
       </form>
 
