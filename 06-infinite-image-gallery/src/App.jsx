@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./App.css";
 
@@ -9,11 +9,7 @@ function App() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    getPhotos();
-  }, [page]);
-
-  function getPhotos() {
+  const getPhotos = useCallback(() => {
     // check if the user is searching
     let apiURL = `https://api.unsplash.com/photos?`;
     if (query) apiURL = `https://api.unsplash.com/search/photos?query=${query}`;
@@ -31,7 +27,11 @@ function App() {
         // if page is > 1, then we are adding for our infinite scroll
         setImages((images) => [...images, ...imagesFromApi]);
       });
-  }
+  }, [page, query]);
+
+  useEffect(() => {
+    getPhotos();
+  }, [page, getPhotos]);
 
   const searchPhotos = (e) => {
     e.preventDefault();
